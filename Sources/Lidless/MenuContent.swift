@@ -18,7 +18,7 @@ struct MenuContent: View {
                 .padding(.horizontal, hInset)
                 .padding(.top, 18)
 
-            Text("Keep your Mac awake when the lid is closed.")
+            Text("Keep your screen awake, or keep your Mac running with the lid closed.")
                 .font(.callout)
                 .foregroundStyle(.secondary)
                 .fixedSize(horizontal: false, vertical: true)
@@ -28,6 +28,12 @@ struct MenuContent: View {
             Divider()
                 .padding(.horizontal, hInset)
                 .padding(.top, 14)
+
+            ScreenAwakeSection()
+                .padding(.horizontal, hInset)
+
+            Divider()
+                .padding(.horizontal, hInset)
 
             PrimaryToggleRow()
                 .padding(.horizontal, hInset)
@@ -167,6 +173,67 @@ private struct PrimaryToggleRow: View {
             .controlSize(.regular)
             .tint(.accentColor)
         }
+    }
+}
+
+// MARK: - Keep screen awake
+
+/// Stops display sleep and the screen saver, like Amphetamine or
+/// `caffeinate -d -i -u`. Works with the lid open and needs no helper.
+private struct ScreenAwakeSection: View {
+    @EnvironmentObject var screen: ScreenAwakeController
+
+    var body: some View {
+        VStack(alignment: .leading, spacing: 4) {
+            SettingRow(title: "Keep screen awake",
+                       titleFont: .body.weight(.semibold),
+                       minHeight: 42) {
+                Toggle("Keep screen awake", isOn: Binding(
+                    get: { screen.isOn },
+                    set: { screen.setOn($0) }
+                ))
+                .labelsHidden()
+                .toggleStyle(.switch)
+                .controlSize(.regular)
+                .tint(.accentColor)
+            }
+
+            SettingRow(title: "For", minHeight: 32) {
+                // Buttons, not a Picker, so choosing the same duration again
+                // restarts the countdown (see KeepAwakeDurationRow).
+                Menu {
+                    Button(AutoOff.durationLabel(minutes: 0)) { screen.start(minutes: 0) }
+                    ForEach(AutoOff.presetMinutes, id: \.self) { minutes in
+                        Button(AutoOff.optionLabel(minutes: minutes)) {
+                            screen.start(minutes: minutes)
+                        }
+                    }
+                } label: {
+                    Text(AutoOff.durationLabel(minutes: screen.minutes))
+                }
+                .menuStyle(.borderlessButton)
+                .fixedSize()
+            }
+
+            if !screen.remaining.isEmpty {
+                Label("Turning off in \(screen.remaining)", systemImage: "timer")
+                    .font(.callout)
+                    .foregroundStyle(.secondary)
+                    .monospacedDigit()
+            } else if screen.isOn {
+                Label("On until you turn it off", systemImage: "display")
+                    .font(.callout)
+                    .foregroundStyle(.secondary)
+            }
+
+            if let err = screen.lastError {
+                Label(err, systemImage: "exclamationmark.triangle.fill")
+                    .font(.callout)
+                    .foregroundStyle(.orange)
+                    .fixedSize(horizontal: false, vertical: true)
+            }
+        }
+        .padding(.bottom, 8)
     }
 }
 

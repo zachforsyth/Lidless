@@ -79,6 +79,10 @@ final class AppState: ObservableObject {
     /// settings window controller below can hand it to `SettingsView`.
     let updater = UpdaterController()
 
+    /// "Keep screen awake": display, screen saver, and idle sleep. Separate
+    /// from the lid-closed mode and needs no helper.
+    let screenAwake = ScreenAwakeController()
+
     private lazy var settingsWindow = SettingsWindowController(
         contentSize: SettingsView.preferredSize
     ) { [weak self] in

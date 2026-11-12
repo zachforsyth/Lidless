@@ -8,6 +8,22 @@ so coding agents (Claude Code, Codex, etc.) keep working while you move around.
 
 > Open source under the [MIT License](LICENSE).
 
+> **This fork** adds **Keep screen awake**: a menu bar switch with an optional
+> time limit (15 min to 4 hours) that stops display sleep, the screen saver, and
+> idle sleep, like Amphetamine or `caffeinate -d -i -u`. It uses ordinary power
+> assertions, needs no helper, and macOS drops them if the app quits. The fork
+> uses the `com.zachforsyth.lidless` bundle id and has no published releases or
+> automatic updates. Build it from source:
+>
+> ```bash
+> xcodegen generate
+> xcodebuild build -scheme Lidless -configuration Release -destination 'generic/platform=macOS' \
+>   -derivedDataPath build CODE_SIGN_STYLE=Manual CODE_SIGN_IDENTITY="Developer ID Application"
+> ```
+>
+> To sign with your own team, change `DEVELOPMENT_TEAM` in `project.yml` and
+> `LidlessHelper.teamID` in `Sources/Shared/HelperProtocol.swift`.
+
 <p align="center">
   <img src="docs/menu-popover.png" alt="Lidless menu bar popover — keep-awake toggle, helper status, battery, and safety controls" width="420">
 </p>
