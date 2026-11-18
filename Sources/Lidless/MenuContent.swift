@@ -41,6 +41,9 @@ struct MenuContent: View {
             KeepAwakeDurationRow()
                 .padding(.horizontal, hInset)
 
+            LockOnLidOpenRow()
+                .padding(.horizontal, hInset)
+
             if !state.autoWarningReasons.isEmpty {
                 AutoDisabledWarning(reasons: state.autoWarningReasons)
                     .padding(.horizontal, hInset)
@@ -282,6 +285,44 @@ private struct KeepAwakeDurationRow: View {
                 Text("Not used while “Automatically enable when charging” is on.")
                     .font(.callout)
                     .foregroundStyle(.secondary)
+                    .fixedSize(horizontal: false, vertical: true)
+            }
+        }
+        .padding(.bottom, 8)
+    }
+}
+
+// MARK: - Lock when lid opens
+
+/// Locks the screen as soon as the lid opens, so someone who opens the laptop
+/// while it runs with the lid closed lands on the lock screen.
+private struct LockOnLidOpenRow: View {
+    @EnvironmentObject var lidLock: LidLockController
+
+    var body: some View {
+        VStack(alignment: .leading, spacing: 4) {
+            SettingRow(title: "Lock when lid opens", minHeight: 32) {
+                Toggle("Lock when lid opens", isOn: Binding(
+                    get: { lidLock.isOn },
+                    set: { lidLock.setOn($0) }
+                ))
+                .labelsHidden()
+                .toggleStyle(.switch)
+                .controlSize(.small)
+                .disabled(!lidLock.lidAvailable)
+            }
+
+            Text(lidLock.lidAvailable
+                 ? "Opening the lid shows the lock screen. Your work keeps running."
+                 : "This Mac has no built-in lid.")
+                .font(.callout)
+                .foregroundStyle(.secondary)
+                .fixedSize(horizontal: false, vertical: true)
+
+            if let err = lidLock.lastError {
+                Label(err, systemImage: "exclamationmark.triangle.fill")
+                    .font(.callout)
+                    .foregroundStyle(.orange)
                     .fixedSize(horizontal: false, vertical: true)
             }
         }

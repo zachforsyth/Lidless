@@ -12,6 +12,15 @@ so coding agents (Claude Code, Codex, etc.) keep working while you move around.
 > time limit (15 min to 4 hours) that stops display sleep, the screen saver, and
 > idle sleep, like Amphetamine or `caffeinate -d -i -u`. It uses ordinary power
 > assertions, needs no helper, and macOS drops them if the app quits. The fork
+> It also adds **Lock when lid opens**: while on, the screen locks the moment
+> the lid goes from closed to open, so someone who opens the laptop while it
+> runs with the lid shut lands on the lock screen. It watches
+> `AppleClamshellState` on `IOPMrootDomain` and locks with the private
+> `SACLockScreenImmediate` call (the Lock Screen menu item); if a macOS update
+> removes that call, the popover shows an error. With an external display in
+> clamshell mode, opening the lid locks too.
+>
+> The fork
 > uses the `com.zachforsyth.lidless` bundle id and has no published releases or
 > automatic updates. Build it from source:
 >

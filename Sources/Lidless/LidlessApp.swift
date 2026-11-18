@@ -9,6 +9,7 @@ struct LidlessApp: App {
             MenuContent()
                 .environmentObject(state)
                 .environmentObject(state.screenAwake)
+                .environmentObject(state.lidLock)
         } label: {
             MenuBarIcon(state: state, screenAwake: state.screenAwake)
         }

@@ -83,6 +83,9 @@ final class AppState: ObservableObject {
     /// from the lid-closed mode and needs no helper.
     let screenAwake = ScreenAwakeController()
 
+    /// "Lock when lid opens". Independent of the helper.
+    let lidLock = LidLockController()
+
     private lazy var settingsWindow = SettingsWindowController(
         contentSize: SettingsView.preferredSize
     ) { [weak self] in
